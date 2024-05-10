@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Finder</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand">Place Finder</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" id="navCollapseBut">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mr-auto"></ul>
+      <div class="search-container">
+        <input type="text" class="form-control" id="patterns" placeholder="E.g. Malaysia, Penang, Pizza Hut, Intel etc." oninput="stimulateDFA()">
+        <button class="search-button" onclick="stimulateDFA()"><i class="fa fa-search"></i></button>
+      </div>
+    </div>
+  </nav>
+    <div class="result-container" id="resultContainer">
+      <div class="row" id="resultContainerRow">
+        <div class="col1">
+          <div class="home-file-row" id="homeFormRow"> 
+            <form class="home-form-container" id="homeFormContainer" enctype='multipart/form-data'>
+              <div class="home-upload-files-container" id="homeFileContainer">
+                <div class="home-drag-file-area" id="draggableFileArea">
+                  <br>
+                  <span class="material-icons-outlined upload-icon"> file_upload </span>
+                  <h3 class="dynamic-message"  style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;"> Drag & drop any file here </h3>
+                  <label class="label"> or <span class="browse-files"> <input type="file" id="openFile" class="default-file-input"/> <span class="browse-files-text" style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;">Browse file</span> <span>from device</span> </span> </label>
+                </div>
+                <span class="cannot-upload-message"> <span class="material-icons-outlined">error</span> Please select a file first <span class="material-icons-outlined cancel-alert-button">cancel</span> </span>
+                <div class="home-file-block">
+                  <div class="home-file-info"> <span class="material-icons-outlined file-icon">description</span> <span class="file-name"> </span> | <span class="file-size">  </span> </div>             
+                  <div class="progress-bar"> </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="file-row" id="formContainer">
+            <form class="form-container" enctype='multipart/form-data'>
+              <div class="upload-files-container">
+                <div class="drag-file-area" id="draggableFileArea">                 
+                  <h3 class="dynamic-message" style="font-size: 16px; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;"> Drag & drop any file here </h3>
+                  <label class="label" style="font-size: 10px;"> or <span class="browse-files"> <input type="file" id="changeFile" class="default-file-input"/> <span class="browse-files-text" style="font-size: 13px; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; ">Browse file</span></span> </label>
+                </div>
+                <span class="cannot-upload-message"> <span class="material-icons-outlined">error</span> Please select a file first <span class="material-icons-outlined cancel-alert-button">cancel</span> </span>
+                <div class="file-block">
+                  <div class="file-info"> <span class="material-icons-outlined file-icon">description</span> <span id="fileName" class="file-name"> </span> | <span id="fileSize" class="file-size">  </span> </div>
+                  <div class="progress-bar"> </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="occ-row">
+            <div class="position-container" id="occRow">
+              <h3 class="dynamic-message" style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; font-size: 20px;">Occurrence</h3>
+              <div class="scrolling-occ-window">
+                <div class="position-content" id="occurrences">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="pos-row">
+            <div class="position-container" id="posRow">
+              <h3 class="dynamic-message" style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; font-size: 20px;">Position</h3>
+              <div class="scrolling-pos-window">
+                <div class="position-content" id="positions">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col2">
+          <div class="home-container"  id="homePageRow">
+            <h1 style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; font-size: 50px;">Welcome to Place Finder</h1>
+            <h4 style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; font-size: 16px; text-align: center;">Let's find the place(s) that you want with Place Finder</h4>
+            <br>
+            <h4 style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; font-size: 18px; text-align: center;">1. Select a text file.</h4>
+            <h4 style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; font-size: 18px; text-align: center;">2. Enter the place(s) that you want with the search bar.</h4>
+            <br>
+            <br>
+            <h3 style="color: #df372f; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; font-size: 16px; text-align: center;">* Multiple places have to be separated by comma (",") *</h3>
+          </div>
+          <div class="output-container"  id="resultRow">
+            <h2 class="dynamic-message" style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;  font-weight: bold;">Result </h2>
+            <label>
+              <input type="checkbox" id="myCheckbox"> Exact String Matching
+            </label>
+            <div id="status"></div>
+            <div class="scrolling-output-window">
+              <div id='text' class='1vh w-full' style='padding:15px; text-align: justify;'>
+                <div id="fileContent" class="text-area"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="dfa.js"></script>
+</body>
+</html>
