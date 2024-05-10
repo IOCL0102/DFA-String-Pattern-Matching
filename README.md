@@ -1,4 +1,4 @@
-## This program is a DFA String pattern matching program
+## This is a DFA String pattern matching program
 
 Place Finder (E.g., Country, Organization, Shops, States etc.) 
 
